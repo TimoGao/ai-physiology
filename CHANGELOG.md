@@ -1,5 +1,18 @@
 # Changelog
 
+## MAO v0.5.1 — Longitudinal Health Benchmark — 2026-09-29
+
+Long-horizon health prediction benchmark:
+- added low-and-slow degradation traces with healthy controls
+- compared Adaptive Monitoring Baseline（自适应监控基线） against Physiology Monitor（生理监测器）
+- introduced Homeostatic Debt（稳态债务） and Recovery Reserve（恢复储备） as longitudinal predictive state
+- 200 seeds, 400 trajectories, 800 monitor evaluations
+- first signal: physiology AUC 0.781 vs adaptive monitoring 0.765
+- false early-warning rate reduced from 95.8% to 37.1%
+- trade-off: recall fell from 100.0% to 92.5%, and warnings arrived later
+- result remains synthetic and is not evidence of real-AI chronic disease
+- next gate: v0.5.2 Predictive Validity & Calibration
+
 ## MAO v0.5 — Reliability Substrate Integration — 2026-09-29
 
 Architecture correction based on v0.4:
@@ -11,7 +24,6 @@ Architecture correction based on v0.4:
 - both variants share the same deterministic failure, latency and fallback traces
 - evaluation focus shifted from short-term task success to long-horizon health
 - added v0.5 runner, tests and documentation
-
 
 ## MAO Experiment v0.4 — 2026-09-29
 
