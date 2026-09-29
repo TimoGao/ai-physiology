@@ -1,21 +1,21 @@
-# AI Physiology Roadmap v0.2（人工智能生理学路线图）
+# AI Physiology Roadmap v0.3（人工智能生理学路线图）
 
 > 这份是执行路线，不是愿景清单。
 >
-> 主线只有一个：
+> 当前主问题已经收窄为：
 >
-> **AI Physiology 能否通过显式内部循环、生命体征、器官健康和人工稳态，提高长期自主 AI 的稳定性、恢复能力，并降低慢性退化？**
+> **长期 AI 是否存在传统短期可靠性工程难以处理的慢性退化；如果存在，Vital Signs（生命体征）、Homeostatic Debt（稳态债务）和 Recovery Reserve（恢复储备）能否更早、更稳地识别和调节这种退化？**
 
 最后更新：2026-09-29
 
 ---
 
-# 现在做到哪里了
+# 当前状态
 
 ## 01 理论框架
-**状态：完成第一轮**
+**状态：第一轮完成，暂停扩张**
 
-已经有：
+已有：
 - AI Physiology（人工智能生理学）定义
 - Cell → Tissue → Organ → Organism
 - 四张内部通信网络
@@ -23,21 +23,21 @@
 - Organ Internalization（器官内化）
 - Homeostasis First（稳态优先）
 
-当前原则：
-> 不再继续扩“大理论”，除非实验逼着我们改。
+原则：
+> 除非实验逼着我们改，否则不继续扩“大理论”。
 
 ---
 
 ## 02 Prior Art（已有工作）
 **状态：够用，暂停扩张**
 
-已经完成：
+已有：
 - Related Work & Prior Art v0.1
 - 28篇核心文献矩阵
 - 核心机制继承矩阵 v0.2
 
-下一次再扩文献：
-> 等正式写论文时再补。
+原则：
+> 等正式写论文时再补文献，不继续无边界扩展。
 
 ---
 
@@ -54,125 +54,146 @@
 - AIP-007 AI Vital Signs（AI生命体征）v0.1
 - AIP-008 Organ Health & Pathology（器官健康与病理）v0.1
 
-当前原则：
-> 暂停新增 AIP，先用实验检验已有规范。
+原则：
+> 暂停新增 AIP，先验证已有机制。
 
 ---
 
-# 接下来的正式执行顺序
+# 实验路线已经走过什么
 
-## Phase A：MAO Experiment v0.3
-**当前阶段：正在完成**
+## MAO v0.3
+完成重复实验、Strong Baseline（更强基线）、JSON/CSV、统计汇总。
 
-目标：
-> 把“单次演示”升级成重复实验。
+## MAO v0.4
+完成公平压力轨迹、消融实验、成本核算。
 
-内容：
-- Strong Baseline（更强基线）
-- 10 seeds 重复
-- mean / stdev / min / max
-- JSON / CSV export
-- 六类 stress scenarios
+关键修正：
+> AI Physiology 不应该替代 Reliability Engineering（可靠性工程）。
 
-完成标准：
-> 六类实验都可以批量重复、统一输出、稳定复现。
+## MAO v0.5
+把 retry / timeout / fallback / circuit breaker 正式放到底层。
+
+关键结果：
+> 在明显故障场景中，“可靠性工程 + 生理层”没有比单纯可靠性工程表现出稳定增量收益。
+
+因此没有直接进入真实 LLM。
 
 ---
 
-## Phase B：MAO Experiment v0.4
-**下一步**
+# 当前阶段：MAO v0.5.1 — Longitudinal Health Benchmark
 
 目标：
-> 判断“差异是不是真的存在，以及到底是谁带来的”。
+> 不测已经越线的问题，而测 Low-and-Slow Degradation（低强度长期退化）。
 
-要做：
-
-### 1. Statistical robustness（统计稳健性）
-- 30-50 seeds
-- confidence interval（置信区间）
-- effect size（效应量）
-
-### 2. Ablation Study（消融实验）
-分别去掉：
-- AI Blood
-- Homeostasis
-- Vital Signs
-- Organ Health
-
-验证：
-> 哪一层真正有用？
-
-### 3. Cost Accounting（成本核算）
 比较：
-- extra messages
-- compute overhead
-- memory overhead
-- latency overhead
-- maintenance complexity
+- Adaptive Monitoring Baseline（自适应监控基线）
+- Physiology Monitor（生理监测器：Debt + Reserve）
 
-### 4. Stronger Baseline 2.0
-加入更成熟的：
-- retry policy
-- cleanup policy
-- circuit breaker
-- health check
-- security filter
+首轮规模：
+- 200 seeds
+- 400 longitudinal trajectories（纵向轨迹）
+- 800 monitor evaluations（监测评估）
+- 每条240个时间步
 
-完成标准：
-> MAO 的收益仍然能够超过“普通工程优化”。
+首轮信号：
+- AUC：0.765 → 0.781
+- 假提前预警率：95.8% → 37.1%
+- 召回率：100.0% → 92.5%
+- 平均提前量：162.8 → 103.5
+
+当前解释：
+> 生理监测器表现得更“克制”：假警报明显更少，但漏报更多、报警更晚。
+
+这只是 synthetic signal（合成信号），不是理论验证。
 
 ---
 
-## Phase C：真实 LLM 实验
-**v0.4 之后再做**
+# 下一关：MAO v0.5.2 — Predictive Validity & Calibration
 
-目标：
-> 把 synthetic agent（合成智能体）换成真实 LLM Agent。
+这是进入真实LLM之前最后一个合成验证关卡。
+
+只做五件事：
+
+## 1. Threshold Calibration（阈值校准）
+不能用固定手工阈值直接比较。
+
+## 2. ROC / Precision-Recall
+比较完整曲线，而不是单个阈值点。
+
+## 3. Same False-Positive Budget（相同误报预算）
+例如都限制在：
+- 5%
+- 10%
+- 20%
+
+看谁的 recall（召回率）和 lead time（提前量）更好。
+
+## 4. Multiple Degradation Shapes（多种退化形态）
+至少增加：
+- 线性慢漂移
+- 阶段性恶化
+- 暂时恢复后复发
+- 单器官慢退化
+- 多变量交叉退化
+
+## 5. Debt / Reserve Ablation（债务/储备消融）
+比较：
+- Debt only
+- Reserve only
+- Debt + Reserve
+- 普通 adaptive monitoring
+
+停止条件：
+> 如果 v0.5.2 的增量信号消失，不进入真实LLM，继续收缩理论。
+
+如果信号仍然存在：
+> 才进入 Real LLM v0.6。
+
+---
+
+# Real LLM v0.6（真实大模型实验）
 
 第一版只接一个模型。
 
-保持相同：
+保持一致：
 - model
 - prompt
 - tools
 - task set
+- reliability substrate
 
 只改变：
-- 普通 Agent
+- Reliable Agent
 vs
-- MAO Agent
+- Reliable Agent + AI Physiology
 
 测试：
-- long context
-- memory pollution
-- repeated tool failure
-- multi-step task
-- persistent workspace
+- persistent memory（持续记忆）
+- long context（长上下文）
+- repeated tool failure（重复工具失败）
+- low-and-slow memory pollution（低强度长期记忆污染）
+- persistent workspace（持续工作区）
 
 完成标准：
-> 在真实 Agent 里仍然能观察到同样的慢性退化和恢复差异。
+> 在真实Agent里仍出现与合成纵向基准相同方向的长期健康预测差异。
 
 ---
 
-## Phase D：Long-Horizon Run（长期运行）
+# Long-Horizon Run（长期运行）
 
-这是后面真正关键的一步。
-
-建议三个时间尺度：
+如果真实LLM小实验通过，再做：
 
 ### 24h
-先发现明显 bug 和循环问题。
+验证工程稳定性。
 
 ### 72h
-看 debt（债务）是否开始积累。
+观察 debt / reserve 是否开始分化。
 
 ### 7d
-看 chronic degradation（慢性退化）是否出现。
-
-后面如果资源允许：
+观察 chronic degradation（慢性退化）是否真正出现。
 
 ### 30d
-才真正接近“长期 AI 系统”研究。
+资源允许后再考虑。
 
 主要观察：
 - Homeostatic Debt
@@ -185,157 +206,49 @@ vs
 
 ---
 
-## Phase E：AI Pathology（AI病理学）
-**只有长期实验出现真实病理模式后才推进**
+# 后续才做的事情
 
-现在我们已经提出：
-- Context Obesity
-- Memory Contamination
-- Chronic Degradation
-- Homeostatic Exhaustion
-等。
-
-但下一步不是继续发明病名。
-
-只有当长期实验真的反复出现某种模式，才：
-- 定义 pathology signature（病理特征）
-- 命名
-- 分级
-- 研究传播路径
-- 研究治疗方案
+## AI Pathology（AI病理学）
+只有真实长期实验反复出现稳定病理模式后再定义疾病。
 
 原则：
 > 先观察疾病，再命名疾病。
 
----
-
-## Phase F：扩展器官
-**至少在真实LLM实验之后**
-
-是否加入：
+## 扩展器官
+只有实验缺口需要时才加入：
 - Liver-like Organ（肝式器官）
 - Kidney-like Organ（肾式器官）
 - Immune Organ（免疫器官）
 - Endocrine System（内分泌系统）
 
-全部由实验决定。
-
-例如：
-如果 Memory Contamination 始终是核心问题，
-才正式拆出：
-- Liver-like validation
-- Kidney-like cleanup
-
-如果安全污染是核心问题，
-才独立 Immune Organ。
-
 原则：
-> 不是因为人体有，所以 AI 有；而是因为实验缺，所以才长出来。
+> 不是因为人体有，所以AI有；而是因为实验缺，所以才长出来。
+
+## 第一篇论文
+至少等到：
+> Real LLM + 72h / 7d long-run 之后。
 
 ---
 
-## Phase G：第一篇论文
+# 当前五个关卡
 
-我建议不是现在就写。
-
-比较合适的时间点：
-
-> **真实LLM实验 + 至少一轮 72h / 7d 长跑之后。**
-
-第一篇论文结构大致：
-
-1. Problem：长期AI为什么会慢性退化
-2. Related Work
-3. AI Physiology Framework
-4. MAO Architecture
-5. Vital Signs / Debt / Recovery Reserve
-6. Experiment Design
-7. Baseline vs MAO
-8. Ablation
-9. Long-Horizon Results
-10. Limitations / Falsification
-
-题目暂定：
-
-**AI Physiology: A Life-System Architecture for Persistent Autonomous AI**
-
-中文：
-**《人工智能生理学：面向持续自主AI的生命系统架构》**
+1. 能不能说清楚？—— 已通过  
+2. 能不能写成规范？—— 已通过第一轮  
+3. 能不能写成程序？—— 已通过第一轮  
+4. 有没有稳定实验增量收益？—— **正在验证，v0.5.1首次出现弱正信号**  
+5. 真实AI里还成立吗？—— 尚未进入
 
 ---
 
-# 你现在可以把整个项目理解成五个关卡
+# 当前固定执行顺序
 
-## 关卡1：能不能说清楚？
-已经通过。
+1. MAO v0.5.1 ✅
+2. MAO v0.5.2 Predictive Validity & Calibration
+3. 如果通过 → Real LLM v0.6
+4. 24h → 72h → 7d 长跑
+5. 根据真实结果回修 AIP-004~008
+6. 再决定是否发展 AI Pathology 和扩展器官
+7. Framework Paper（框架论文）
 
-## 关卡2：能不能写成规范？
-已经通过第一轮。
-
-## 关卡3：能不能写成程序？
-已经通过第一轮。
-
-## 关卡4：有没有稳定实验收益？
-**现在正在验证。**
-
-## 关卡5：真实AI里还成立吗？
-下一阶段。
-
-只有关卡4和5通过，这个方向才真正站得住。
-
----
-
-# 我建议未来 8 个动作不要变
-
-1. 完成 MAO Experiment v0.3
-2. 跑第一轮 10-seed 数据
-3. 做 v0.4 消融 + 统计
-4. 选一个真实 LLM 接入
-5. 做真实 Agent 六场景实验
-6. 做 24h → 72h → 7d 长跑
-7. 根据真实病理回修 AIP-004~008
-8. 开始 Framework Paper（框架论文）
-
-在第 6 步之前：
-> **不扩 AI 社会、不扩生殖、不扩意识、不扩全套器官。**
-
-这样方向基本不会偏。
-
-
----
-
-# 2026-09-29 路线修正：v0.5 Reliability Substrate Integration
-
-v0.4 表明：
-
-> AI Physiology 不应该和普通可靠性工程竞争，而应该建立在它之上。
-
-因此正式插入 Phase B.5：
-
-## Phase B.5：MAO v0.5 — Reliability Substrate Integration（可靠性底座整合）
-
-目标：
-> 比较“成熟可靠性工程”与“成熟可靠性工程 + 生理层”。
-
-双方共享：
-- retry
-- timeout
-- fallback
-- circuit breaker
-- risk filter
-- basic cleanup
-- load shedding
-
-Physiology 组额外拥有：
-- Vital Signs
-- Homeostasis
-- Homeostatic Debt
-- Recovery Reserve
-- Degradation Detection
-- Organism Mode
-
-停止条件：
-> 如果生理层在长期健康指标上没有稳定增量价值，不进入真实LLM实验。
-
-如果通过：
-> 下一阶段进入 Real LLM v0.6（真实大模型实验）。
+在真实长跑前：
+> **不扩AI社会、不扩生殖、不扩意识、不扩全套器官。**
