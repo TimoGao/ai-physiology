@@ -1,369 +1,302 @@
-# AI Physiology Roadmap v0.1（人工智能生理学路线图 v0.1）
+# AI Physiology Roadmap v0.2（人工智能生理学路线图）
 
-> 这份路线图的作用不是把事情做得更多，而是防止项目越做越散。
+> 这份是执行路线，不是愿景清单。
 >
-> 原则：每一阶段必须有明确问题、明确产物和明确停止条件。
+> 主线只有一个：
+>
+> **AI Physiology 能否通过显式内部循环、生命体征、器官健康和人工稳态，提高长期自主 AI 的稳定性、恢复能力，并降低慢性退化？**
 
 最后更新：2026-09-29
 
 ---
 
-# 总目标
+# 现在做到哪里了
 
-把 AI Physiology（人工智能生理学）从：
+## 01 理论框架
+**状态：完成第一轮**
 
-> 一套关于 AI 生命体的概念框架
+已经有：
+- AI Physiology（人工智能生理学）定义
+- Cell → Tissue → Organ → Organism
+- 四张内部通信网络
+- 六类生理闭环
+- Organ Internalization（器官内化）
+- Homeostasis First（稳态优先）
 
-逐步推进成：
-
-> **有 prior art（已有工作）、有定义、有开放规范、有 reference implementation（参考实现）、有实验数据、可发表论文的研究框架。**
+当前原则：
+> 不再继续扩“大理论”，除非实验逼着我们改。
 
 ---
 
-# Phase 0：概念成型
-
-**状态：基本完成**
+## 02 Prior Art（已有工作）
+**状态：够用，暂停扩张**
 
 已经完成：
-- AI Physiology 命名
-- Human organ → AI organ mapping（人体器官→AI器官映射）
-- 四张内部网络
-- 六大生理闭环
-- AI Cell → Tissue → Organ → Organism
-- Homeostasis First（稳态优先）
-- Organ Internalization（器官内化）
-
-产物：
-- Framework v0.1
-- GitHub repository
-
-停止条件：
-> 能用一套统一语言解释“我们究竟在研究什么”。
-
----
-
-# Phase 1：Prior Art & Boundary（已有工作与边界）
-
-**状态：基本完成**
-
-目标：
-> 弄清楚什么已经有人做，什么只是换名字，什么才可能是自己的贡献。
-
-已完成：
 - Related Work & Prior Art v0.1
-- 28篇核心阅读矩阵
+- 28篇核心文献矩阵
 - 核心机制继承矩阵 v0.2
 
-还需要：
-- 后续随论文写作补正式引用
-- 不再无限扩文献
-
-停止条件：
-> 已经足够支撑第一篇 framework paper（框架论文）的 Related Work（相关工作）章节。
+下一次再扩文献：
+> 等正式写论文时再补。
 
 ---
 
-# Phase 2：Core Specification（核心规范）
+## 03 AIP Core Specification（核心规范）
+**状态：第一轮完成**
 
-**状态：接近完成**
-
-目标：
-> 从 metaphor（比喻）进入 architecture（架构）。
-
-核心规范：
-
+已有：
 - AIP-001 AI Organism（AI生命体）
 - AIP-002 AI Cell（AI细胞）
 - AIP-003 AI Organ（AI器官）
-- AIP-004 AI Blood（AI血液）v0.2 ✅
-- AIP-005 Artificial Homeostasis（人工稳态）v0.2 ✅
-- AIP-006 Organ Interface（器官接口）v0.2 ✅
+- AIP-004 AI Blood（AI血液）v0.2
+- AIP-005 Artificial Homeostasis（人工稳态）v0.2
+- AIP-006 Organ Interface（器官接口）v0.2
+- AIP-007 AI Vital Signs（AI生命体征）v0.1
+- AIP-008 Organ Health & Pathology（器官健康与病理）v0.1
 
-接下来建议补两个小规范：
-
-### AIP-007 AI Vital Signs（AI生命体征）
-把生命体征从 AIP-005 单独抽出来，定义：
-- measurement
-- ranges
-- trends
-- reliability
-- sensor confidence
-- escalation
-
-### AIP-008 Organ Health & Pathology（器官健康与病理）
-专门定义：
-- stress
-- degradation
-- injury
-- chronic disease
-- aging
-- debt
-- recovery reserve
-
-停止条件：
-> 最小生命体的关键状态、循环和器官接口都能被明确描述。
+当前原则：
+> 暂停新增 AIP，先用实验检验已有规范。
 
 ---
 
-# Phase 3：Minimal Artificial Organism（最小人工生命体）
+# 接下来的正式执行顺序
 
-**状态：现在进入**
+## Phase A：MAO Experiment v0.3
+**当前阶段：正在完成**
 
 目标：
-> 不再继续画架构图，开始做最小实验系统。
+> 把“单次演示”升级成重复实验。
 
-v0.1 组成：
-- Brain
-- Runtime / Heart
+内容：
+- Strong Baseline（更强基线）
+- 10 seeds 重复
+- mean / stdev / min / max
+- JSON / CSV export
+- 六类 stress scenarios
+
+完成标准：
+> 六类实验都可以批量重复、统一输出、稳定复现。
+
+---
+
+## Phase B：MAO Experiment v0.4
+**下一步**
+
+目标：
+> 判断“差异是不是真的存在，以及到底是谁带来的”。
+
+要做：
+
+### 1. Statistical robustness（统计稳健性）
+- 30-50 seeds
+- confidence interval（置信区间）
+- effect size（效应量）
+
+### 2. Ablation Study（消融实验）
+分别去掉：
 - AI Blood
-- Homeostasis Layer
-- Memory Organ
-- Tool / Body Organ
+- Homeostasis
+- Vital Signs
+- Organ Health
 
-不做：
-- 完整生殖
-- AI社会
-- 意识
-- 情绪
-- 全套器官
+验证：
+> 哪一层真正有用？
 
-产物：
-1. MAO Architecture v0.1
-2. reference schema
-3. 最小代码原型
-4. baseline agent
-5. experiment runner
+### 3. Cost Accounting（成本核算）
+比较：
+- extra messages
+- compute overhead
+- memory overhead
+- latency overhead
+- maintenance complexity
 
-停止条件：
-> 可以真实运行 baseline vs MAO 对照实验。
+### 4. Stronger Baseline 2.0
+加入更成熟的：
+- retry policy
+- cleanup policy
+- circuit breaker
+- health check
+- security filter
+
+完成标准：
+> MAO 的收益仍然能够超过“普通工程优化”。
 
 ---
 
-# Phase 4：Chronic Disease & Long-Horizon Experiments（慢性病与长期实验）
-
-这是我认为非常关键的一阶段。
+## Phase C：真实 LLM 实验
+**v0.4 之后再做**
 
 目标：
-> 证明 AI Physiology 不是“出错以后自动重试”，而是能解释和缓解长期系统退化。
+> 把 synthetic agent（合成智能体）换成真实 LLM Agent。
 
-重点实验：
+第一版只接一个模型。
 
-### E1 Context Obesity（上下文肥胖）
-测试长期上下文膨胀。
+保持相同：
+- model
+- prompt
+- tools
+- task set
 
-### E2 Memory Contamination（记忆污染）
-测试错误、冲突、过期记忆积累。
+只改变：
+- 普通 Agent
+vs
+- MAO Agent
 
-### E3 Tool Deterioration（工具退化）
-测试执行器逐渐变差。
+测试：
+- long context
+- memory pollution
+- repeated tool failure
+- multi-step task
+- persistent workspace
 
-### E4 Resource Stress（资源压力）
-测试计算和 token 资源下降。
-
-### E5 Security Contamination（安全污染）
-测试错误/恶意内容在内部传播。
-
-### E6 Chronic Degradation（慢性退化）
-无单次致命故障，持续制造轻微损伤。
-
-核心指标：
-- task success
-- homeostatic debt
-- recovery reserve
-- memory integrity
-- error accumulation
-- intervention count
-- recovery time
-- total cost
-
-停止条件：
-> 有一组重复实验数据，能够支持或否定最小生理闭环的价值。
+完成标准：
+> 在真实 Agent 里仍然能观察到同样的慢性退化和恢复差异。
 
 ---
 
-# Phase 5：Pathology（病理学）分支
+## Phase D：Long-Horizon Run（长期运行）
 
-**只有 Phase 4 有数据以后才做。**
+这是后面真正关键的一步。
 
-目标：
-> 从“AI健康”进一步研究“AI怎么生病”。
+建议三个时间尺度：
 
-可能形成：
+### 24h
+先发现明显 bug 和循环问题。
 
-### AI Pathology（人工智能病理学）
-研究：
-- Acute Failure（急性故障）
-- Chronic Disease（慢性病）
-- Cross-organ Pathology（跨器官病理）
-- Aging（衰老）
-- Autoimmune Failure（自身免疫式故障）
-- Organ Failure（器官衰竭）
+### 72h
+看 debt（债务）是否开始积累。
 
-产物：
-- pathology taxonomy（病理分类）
-- disease signatures（疾病特征）
-- recovery protocols（恢复协议）
+### 7d
+看 chronic degradation（慢性退化）是否出现。
 
-停止条件：
-> 病理分类能够帮助解释真实实验故障，而不是只增加名词。
+后面如果资源允许：
+
+### 30d
+才真正接近“长期 AI 系统”研究。
+
+主要观察：
+- Homeostatic Debt
+- Recovery Reserve
+- Memory Integrity
+- Error Accumulation
+- Human Intervention
+- Cost Drift
+- Performance Drift
 
 ---
 
-# Phase 6：Expand Organ Systems（扩展器官系统）
+## Phase E：AI Pathology（AI病理学）
+**只有长期实验出现真实病理模式后才推进**
 
-**只有最小系统验证有效以后才开始。**
+现在我们已经提出：
+- Context Obesity
+- Memory Contamination
+- Chronic Degradation
+- Homeostatic Exhaustion
+等。
 
-按照实际缺口逐个加入：
+但下一步不是继续发明病名。
 
-1. Liver-like Organ（肝式器官）
-2. Kidney-like Organ（肾式器官）
-3. Immune Organ（免疫器官）
-4. Endocrine System（内分泌系统）
-5. Cerebellum / Reflex Layer（小脑 / 反射层）
-6. Growth / Reproduction（成长 / 繁殖）
+只有当长期实验真的反复出现某种模式，才：
+- 定义 pathology signature（病理特征）
+- 命名
+- 分级
+- 研究传播路径
+- 研究治疗方案
 
 原则：
-
-> 没有实验需求，就不新增器官。
-
-每新增一个器官都必须回答：
-- 它解决什么问题？
-- 普通架构为什么解决不好？
-- 它增加什么可测变量？
-- 它是否显著提高长期稳定性？
+> 先观察疾病，再命名疾病。
 
 ---
 
-# Phase 7：Framework Paper（框架论文）
+## Phase F：扩展器官
+**至少在真实LLM实验之后**
 
-建议在 Phase 4 初步有数据后开始正式写。
+是否加入：
+- Liver-like Organ（肝式器官）
+- Kidney-like Organ（肾式器官）
+- Immune Organ（免疫器官）
+- Endocrine System（内分泌系统）
 
-暂定题目：
+全部由实验决定。
 
-**AI Physiology: A Life-System Architecture for Persistent Autonomous Artificial Intelligence**
+例如：
+如果 Memory Contamination 始终是核心问题，
+才正式拆出：
+- Liver-like validation
+- Kidney-like cleanup
+
+如果安全污染是核心问题，
+才独立 Immune Organ。
+
+原则：
+> 不是因为人体有，所以 AI 有；而是因为实验缺，所以才长出来。
+
+---
+
+## Phase G：第一篇论文
+
+我建议不是现在就写。
+
+比较合适的时间点：
+
+> **真实LLM实验 + 至少一轮 72h / 7d 长跑之后。**
+
+第一篇论文结构大致：
+
+1. Problem：长期AI为什么会慢性退化
+2. Related Work
+3. AI Physiology Framework
+4. MAO Architecture
+5. Vital Signs / Debt / Recovery Reserve
+6. Experiment Design
+7. Baseline vs MAO
+8. Ablation
+9. Long-Horizon Results
+10. Limitations / Falsification
+
+题目暂定：
+
+**AI Physiology: A Life-System Architecture for Persistent Autonomous AI**
 
 中文：
-
-**《人工智能生理学：面向持续自主人工智能的生命系统架构》**
-
-论文重点不是宣称“AI是生命”。
-
-重点：
-1. 现有研究碎片化
-2. organism-level synthesis（生命体级整合）
-3. core physiological architecture
-4. MAO implementation
-5. long-horizon experiments
-6. limitations and falsification
-
-潜在渠道：
-- arXiv
-- ALIFE Conference
-- Artificial Life journal
-- 后续系统类 / Agent 类会议
+**《人工智能生理学：面向持续自主AI的生命系统架构》**
 
 ---
 
-# Phase 8：Specification v1.0（规范1.0）
+# 你现在可以把整个项目理解成五个关卡
 
-只有论文和实验之后再做。
+## 关卡1：能不能说清楚？
+已经通过。
 
-目标：
-> 从个人研究项目变成可供其他人实现和讨论的开放规范。
+## 关卡2：能不能写成规范？
+已经通过第一轮。
 
-包括：
-- stable AIP numbering
-- terminology
-- schema
-- reference implementation
-- benchmark
-- test suite
-- versioning rules
+## 关卡3：能不能写成程序？
+已经通过第一轮。
 
-此时再考虑：
-- contributors
-- external proposals
-- governance of AIPs
+## 关卡4：有没有稳定实验收益？
+**现在正在验证。**
+
+## 关卡5：真实AI里还成立吗？
+下一阶段。
+
+只有关卡4和5通过，这个方向才真正站得住。
 
 ---
 
-# Phase 9：AI Society（AI社会）与 Social Homeostasis（社会稳态）
+# 我建议未来 8 个动作不要变
 
-**现在不要做。**
+1. 完成 MAO Experiment v0.3
+2. 跑第一轮 10-seed 数据
+3. 做 v0.4 消融 + 统计
+4. 选一个真实 LLM 接入
+5. 做真实 Agent 六场景实验
+6. 做 24h → 72h → 7d 长跑
+7. 根据真实病理回修 AIP-004~008
+8. 开始 Framework Paper（框架论文）
 
-只有单个 AI Organism 的身份、健康、生命周期相对成熟后，再研究：
+在第 6 步之前：
+> **不扩 AI 社会、不扩生殖、不扩意识、不扩全套器官。**
 
-- AI identity
-- responsibility
-- sanctions
-- quarantine
-- reputation
-- inter-organism protocols
-- social homeostasis
-
-否则容易从工程问题滑向纯哲学。
-
----
-
-# 当前未来 6 个具体动作
-
-按照执行顺序：
-
-## Step 1
-完成 **Minimal Artificial Organism v0.1** ✅
-
-## Step 2
-做 **AIP-007 AI Vital Signs（AI生命体征）v0.1**
-
-## Step 3
-做 **AIP-008 Organ Health & Pathology（器官健康与病理）v0.1**
-
-## Step 4
-写 MAO 的最小代码原型。
-
-## Step 5
-做 baseline vs MAO 第一轮 6 个 stress scenarios（压力场景）。
-
-## Step 6
-根据实验结果决定：
-- 继续扩器官
-或
-- 收缩 / 修改理论
-
----
-
-# 三条防跑偏规则
-
-## Rule 1：没有可测变量，不新增概念
-任何新器官、新病理、新机制都必须能映射到 measurable state（可测状态）。
-
-## Rule 2：没有实验需求，不新增器官
-不能因为人体有某个器官，AI就必须有。
-
-## Rule 3：优先解决真实长期AI问题
-优先研究：
-- memory contamination
-- context obesity
-- chronic degradation
-- resource stress
-- tool deterioration
-- recovery
-
-而不是优先讨论：
-- AI意识
-- 灵魂
-- 情绪
-- 生殖伦理
-- 星际文明
-
-那些可以以后再回来。
-
----
-
-# 当前项目主线
-
-未来一段时间只围绕这一条：
-
-> **AI Physiology 能否通过显式内部循环、生命体征、器官健康和人工稳态，提高长期自主 AI 的稳定性和恢复能力？**
-
-只要这个问题还没有实验答案，就先不把项目扩得更大。
+这样方向基本不会偏。
