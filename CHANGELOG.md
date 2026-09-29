@@ -1,5 +1,18 @@
 # Changelog
 
+## MAO v0.5 — Reliability Substrate Integration — 2026-09-29
+
+Architecture correction based on v0.4:
+- added a conventional reliability substrate
+- retry, timeout, fallback and circuit breaker are now below the physiology layer
+- introduced a fair two-group comparison:
+  - reliability only
+  - reliability + physiology
+- both variants share the same deterministic failure, latency and fallback traces
+- evaluation focus shifted from short-term task success to long-horizon health
+- added v0.5 runner, tests and documentation
+
+
 ## MAO Experiment v0.4 — 2026-09-29
 
 Fair-comparison and ablation upgrade:
