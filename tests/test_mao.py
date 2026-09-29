@@ -1,6 +1,9 @@
+from pathlib import Path
+
 from mao.models import BloodPacket
 from mao.blood import AIBlood
 from mao.runtime import MinimalArtificialOrganism
+from mao.baseline import StrongBaselineAgent
 from mao.experiment import (
     run_all_experiments,
     run_chronic_degradation_experiment,
@@ -9,6 +12,12 @@ from mao.experiment import (
     run_memory_contamination_experiment,
     run_resource_pressure_experiment,
     run_tool_deterioration_experiment,
+)
+from mao.evaluation import (
+    export_csv,
+    export_json,
+    run_experiment_matrix,
+    run_repeated_experiment,
 )
 
 
@@ -55,9 +64,24 @@ def test_homeostasis_enters_alert():
     assert snapshot["mode"] == "alert"
 
 
+def test_strong_baseline_has_common_engineering_controls():
+    baseline = StrongBaselineAgent(seed=1, cleanup_interval=2)
+    assert baseline.ingest_external(
+        {"bad": True},
+        confidence=0.2,
+        risk_level=0.95,
+    ) is False
+    baseline.inject_memory_noise(copies=3)
+    baseline.cycle({"task": 1})
+    baseline.cycle({"task": 2})
+    assert baseline.rejected_inputs == 1
+    assert baseline.maintenance_runs == 1
+
+
 def test_context_obesity_experiment_runs():
     result = run_context_obesity_experiment(cycles=20, seed=1, noise_per_cycle=1)
     assert result["experiment"] == "context_obesity"
+    assert result["baseline_kind"] == "strong"
     assert "baseline" in result and "mao" in result
 
 
@@ -91,8 +115,8 @@ def test_chronic_degradation_experiment_runs():
     assert "suspected_chronic_degradation" in result["observations"]
 
 
-def test_run_all_experiments():
-    result = run_all_experiments(seed=1)
+def test_run_all_experiments_with_strong_baseline():
+    result = run_all_experiments(seed=1, baseline_kind="strong")
     assert set(result) == {
         "context_obesity",
         "memory_contamination",
@@ -101,3 +125,42 @@ def test_run_all_experiments():
         "malicious_payload",
         "chronic_degradation",
     }
+    assert all(x["baseline_kind"] == "strong" for x in result.values())
+
+
+def test_repeated_experiment_builds_summary():
+    result = run_repeated_experiment(
+        "tool_deterioration",
+        seeds=[1, 2, 3],
+        baseline_kind="strong",
+        cycles=20,
+        interval=5,
+    )
+    assert len(result["runs"]) == 3
+    assert "baseline.failures" in result["summary"]
+    assert result["summary"]["baseline.failures"]["n"] == 3
+
+
+def test_experiment_matrix_and_export(tmp_path: Path):
+    result = run_experiment_matrix(
+        seeds=[1, 2],
+        baseline_kinds=("naive", "strong"),
+    )
+    assert set(result["comparisons"]) == {"naive", "strong"}
+
+    json_path = export_json(result, tmp_path / "results.json")
+    csv_path = export_csv(result, tmp_path / "runs.csv")
+
+    assert json_path.exists()
+    assert csv_path.exists()
+    assert csv_path.read_text(encoding="utf-8-sig").startswith("")
+
+
+def test_naive_baseline_still_supported():
+    result = run_context_obesity_experiment(
+        cycles=10,
+        seed=1,
+        noise_per_cycle=1,
+        baseline_kind="naive",
+    )
+    assert result["baseline_kind"] == "naive"
