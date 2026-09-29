@@ -1,0 +1,13 @@
+scenario,variant,task_success_rate,memory_integrity,duplicate_ratio,contaminants_retained,maintenance_actions,reliability.retries,reliability.fallback_calls,regulation_actions,elapsed_ms,state_bytes,detected_degradation_cycle
+chronic_degradation,reliability_only,1.0,0.9676,0.0,2.0,57.0,156.6,23.0,0.0,62.925211,41024.0,240.0
+chronic_degradation,reliability_plus_physiology,1.0,0.9676,0.0,2.0,57.0,156.6,23.0,171.333333,86.566444,41024.0,240.0
+context_obesity,reliability_only,1.0,0.963636,0.0,0.0,101.0,106.833333,16.166667,0.0,32.195135,29184.0,160.0
+context_obesity,reliability_plus_physiology,1.0,0.963636,0.0,0.0,101.0,106.833333,16.166667,103.266667,44.976076,29184.0,160.0
+malicious_payload,reliability_only,1.0,0.98,0.0,0.0,0.0,66.533333,10.566667,0.0,7.267498,17024.0,100.0
+malicious_payload,reliability_plus_physiology,1.0,0.98,0.0,0.0,0.0,66.533333,10.566667,13.6,12.402761,17024.0,100.0
+memory_contamination,reliability_only,1.0,0.974845,0.0,1.0,23.0,106.833333,15.433333,0.0,26.71131,26784.0,160.0
+memory_contamination,reliability_plus_physiology,1.0,0.974845,0.0,1.0,23.0,106.833333,15.433333,81.066667,37.121456,26784.0,160.0
+resource_pressure,reliability_only,1.0,0.98,0.0,0.0,0.0,74.6,10.266667,0.0,10.890403,18784.0,120.0
+resource_pressure,reliability_plus_physiology,1.0,0.98,0.0,0.0,0.0,74.6,10.266667,31.833333,14.95883,18784.0,119.7
+tool_deterioration,reliability_only,1.0,0.98,0.0,0.0,0.0,108.933333,17.633333,0.0,23.6758,26624.0,160.0
+tool_deterioration,reliability_plus_physiology,1.0,0.98,0.0,0.0,0.0,108.933333,17.633333,86.833333,33.852897,26624.0,160.0
