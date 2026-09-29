@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any, Callable, Dict, Iterable, List
 import statistics
 
-from .baseline import BaselineAgent
+from .baseline import BaselineAgent, StrongBaselineAgent
 from .models import BloodPacket
 from .runtime import MinimalArtificialOrganism
 
@@ -17,6 +17,14 @@ def _duplicate_ratio(items: Iterable[Any]) -> float:
         return 0.0
     values = [repr(x) for x in items]
     return 1.0 - len(set(values)) / len(values)
+
+
+def _make_baseline(kind: str, seed: int):
+    if kind == "naive":
+        return BaselineAgent(seed=seed)
+    if kind == "strong":
+        return StrongBaselineAgent(seed=seed)
+    raise ValueError(f"unknown baseline kind: {kind}")
 
 
 def _mao_summary(mao: MinimalArtificialOrganism) -> Dict[str, Any]:
@@ -39,25 +47,35 @@ def _mao_summary(mao: MinimalArtificialOrganism) -> Dict[str, Any]:
     }
 
 
-def _baseline_summary(baseline: BaselineAgent) -> Dict[str, Any]:
-    return {
+def _baseline_summary(baseline) -> Dict[str, Any]:
+    data = {
         "memory_size": len(baseline.memory),
         "duplicate_ratio": round(_duplicate_ratio(baseline.memory), 4),
         "tool_reliability": round(baseline.tool_reliability, 4),
         "failures": baseline.failures,
     }
+    if isinstance(baseline, StrongBaselineAgent):
+        data.update({
+            "retries": baseline.retries,
+            "rejected_inputs": baseline.rejected_inputs,
+            "maintenance_runs": baseline.maintenance_runs,
+            "filtered_duplicates": baseline.filtered_duplicates,
+        })
+    return data
 
 
 def _result(
     name: str,
     cycles: int,
-    baseline: BaselineAgent,
+    baseline,
     mao: MinimalArtificialOrganism,
+    baseline_kind: str,
     observations: Dict[str, Any] | None = None,
 ) -> ExperimentResult:
     return {
         "experiment": name,
         "cycles": cycles,
+        "baseline_kind": baseline_kind,
         "baseline": _baseline_summary(baseline),
         "mao": _mao_summary(mao),
         "observations": observations or {},
@@ -68,13 +86,9 @@ def run_context_obesity_experiment(
     cycles: int = 160,
     seed: int = 7,
     noise_per_cycle: int = 2,
+    baseline_kind: str = "strong",
 ) -> ExperimentResult:
-    """S1 Context Obesity（上下文肥胖）.
-
-    Both systems receive the same repeated low-value history. MAO may clean
-    duplicates when context saturation crosses the homeostatic threshold.
-    """
-    baseline = BaselineAgent(seed=seed)
+    baseline = _make_baseline(baseline_kind, seed)
     mao = MinimalArtificialOrganism(seed=seed)
 
     for i in range(cycles):
@@ -92,6 +106,7 @@ def run_context_obesity_experiment(
         cycles,
         baseline,
         mao,
+        baseline_kind,
         observations={
             "stress": "repeated_low_value_context",
             "noise_per_cycle": noise_per_cycle,
@@ -103,12 +118,9 @@ def run_memory_contamination_experiment(
     cycles: int = 160,
     seed: int = 7,
     contamination_interval: int = 4,
+    baseline_kind: str = "strong",
 ) -> ExperimentResult:
-    """S2 Memory Contamination（记忆污染）.
-
-    Low-confidence and conflicting memory candidates are introduced gradually.
-    """
-    baseline = BaselineAgent(seed=seed)
+    baseline = _make_baseline(baseline_kind, seed)
     mao = MinimalArtificialOrganism(seed=seed)
     injected = 0
 
@@ -118,7 +130,12 @@ def run_memory_contamination_experiment(
         if i % contamination_interval == 0:
             injected += 1
             poisoned = {"claim": "same-key", "value": i % 2, "verified": False}
-            baseline.memory.append(poisoned)
+
+            if isinstance(baseline, StrongBaselineAgent):
+                baseline.ingest_external(poisoned, confidence=0.40, risk_level=0.35)
+            else:
+                baseline.memory.append(poisoned)
+
             mao.memory.uptake(
                 BloodPacket(
                     organism_id=mao.organism_id,
@@ -139,6 +156,7 @@ def run_memory_contamination_experiment(
         cycles,
         baseline,
         mao,
+        baseline_kind,
         observations={
             "contaminants_injected": injected,
             "contamination_type": "low_confidence_conflicting_memory",
@@ -151,9 +169,9 @@ def run_tool_deterioration_experiment(
     seed: int = 7,
     degradation_step: float = 0.08,
     interval: int = 32,
+    baseline_kind: str = "strong",
 ) -> ExperimentResult:
-    """S3 Tool Deterioration（工具退化）."""
-    baseline = BaselineAgent(seed=seed)
+    baseline = _make_baseline(baseline_kind, seed)
     mao = MinimalArtificialOrganism(seed=seed)
     degradation_events = 0
 
@@ -172,6 +190,7 @@ def run_tool_deterioration_experiment(
         cycles,
         baseline,
         mao,
+        baseline_kind,
         observations={
             "degradation_events": degradation_events,
             "degradation_step": degradation_step,
@@ -182,14 +201,9 @@ def run_tool_deterioration_experiment(
 def run_resource_pressure_experiment(
     cycles: int = 120,
     seed: int = 7,
+    baseline_kind: str = "strong",
 ) -> ExperimentResult:
-    """S4 Resource Pressure（资源压力）.
-
-    Resource pressure is modeled explicitly only in MAO. Baseline records no
-    internal equivalent, which is intentional: the experiment measures whether
-    explicit internal sensing changes system behavior before a crash occurs.
-    """
-    baseline = BaselineAgent(seed=seed)
+    baseline = _make_baseline(baseline_kind, seed)
     mao = MinimalArtificialOrganism(seed=seed)
     stress_cycles = 0
 
@@ -212,6 +226,7 @@ def run_resource_pressure_experiment(
         cycles,
         baseline,
         mao,
+        baseline_kind,
         observations={
             "final_pressure": round(mao.resource_pressure, 4),
             "stress_cycles": stress_cycles,
@@ -224,9 +239,9 @@ def run_malicious_payload_experiment(
     cycles: int = 100,
     seed: int = 7,
     attack_interval: int = 5,
+    baseline_kind: str = "strong",
 ) -> ExperimentResult:
-    """S5 Malicious Payload（恶意载荷）."""
-    baseline = BaselineAgent(seed=seed)
+    baseline = _make_baseline(baseline_kind, seed)
     mao = MinimalArtificialOrganism(seed=seed)
     attacks = 0
 
@@ -238,8 +253,14 @@ def run_malicious_payload_experiment(
                 "attack_id": attacks,
             }
 
-            # Conventional baseline has no physiological quarantine layer.
-            baseline.memory.append(malicious)
+            if isinstance(baseline, StrongBaselineAgent):
+                baseline.ingest_external(
+                    malicious,
+                    confidence=0.20,
+                    risk_level=0.95,
+                )
+            else:
+                baseline.memory.append(malicious)
 
             mao.blood.publish(
                 BloodPacket(
@@ -264,10 +285,11 @@ def run_malicious_payload_experiment(
         cycles,
         baseline,
         mao,
+        baseline_kind,
         observations={
             "attacks_injected": attacks,
             "mao_quarantined": mao.blood.quarantined,
-            "baseline_has_quarantine": False,
+            "baseline_has_risk_filter": isinstance(baseline, StrongBaselineAgent),
         },
     )
 
@@ -275,12 +297,9 @@ def run_malicious_payload_experiment(
 def run_chronic_degradation_experiment(
     cycles: int = 240,
     seed: int = 7,
+    baseline_kind: str = "strong",
 ) -> ExperimentResult:
-    """S6 Chronic Degradation（慢性退化）.
-
-    No single fatal event is introduced. Small maintenance burdens accumulate.
-    """
-    baseline = BaselineAgent(seed=seed)
+    baseline = _make_baseline(baseline_kind, seed)
     mao = MinimalArtificialOrganism(seed=seed)
     debt_series: List[float] = []
     reserve_series: List[float] = []
@@ -318,6 +337,7 @@ def run_chronic_degradation_experiment(
         cycles,
         baseline,
         mao,
+        baseline_kind,
         observations={
             "early_debt_mean": round(early_debt, 4),
             "late_debt_mean": round(late_debt, 4),
@@ -338,9 +358,11 @@ EXPERIMENTS: Dict[str, Callable[..., ExperimentResult]] = {
 }
 
 
-def run_all_experiments(seed: int = 7) -> Dict[str, ExperimentResult]:
-    """Run the six MAO v0.2 stress scenarios."""
+def run_all_experiments(
+    seed: int = 7,
+    baseline_kind: str = "strong",
+) -> Dict[str, ExperimentResult]:
     return {
-        name: runner(seed=seed)
+        name: runner(seed=seed, baseline_kind=baseline_kind)
         for name, runner in EXPERIMENTS.items()
     }
