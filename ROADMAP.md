@@ -300,3 +300,42 @@ vs
 > **不扩 AI 社会、不扩生殖、不扩意识、不扩全套器官。**
 
 这样方向基本不会偏。
+
+
+---
+
+# 2026-09-29 路线修正：v0.5 Reliability Substrate Integration
+
+v0.4 表明：
+
+> AI Physiology 不应该和普通可靠性工程竞争，而应该建立在它之上。
+
+因此正式插入 Phase B.5：
+
+## Phase B.5：MAO v0.5 — Reliability Substrate Integration（可靠性底座整合）
+
+目标：
+> 比较“成熟可靠性工程”与“成熟可靠性工程 + 生理层”。
+
+双方共享：
+- retry
+- timeout
+- fallback
+- circuit breaker
+- risk filter
+- basic cleanup
+- load shedding
+
+Physiology 组额外拥有：
+- Vital Signs
+- Homeostasis
+- Homeostatic Debt
+- Recovery Reserve
+- Degradation Detection
+- Organism Mode
+
+停止条件：
+> 如果生理层在长期健康指标上没有稳定增量价值，不进入真实LLM实验。
+
+如果通过：
+> 下一阶段进入 Real LLM v0.6（真实大模型实验）。
